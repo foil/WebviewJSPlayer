@@ -18,18 +18,14 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 public class MainActivity extends Activity {
     private final static String TAG = "WebviewJSPlayer";
-    private WebView mVideoView;
-    private String mID;
-    private WebChromeClient.CustomViewCallback mViewCallback;
-    private FrameLayout mRootLayout;
-    private View mCustomView;
-    private WebChromeClient mWebChromeClient;
+    private webVideoView mVideoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,86 +35,10 @@ public class MainActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_youtube_player);
-        mRootLayout = (FrameLayout)findViewById(R.id.youtubeLayout);
+        mVideoView = ((webVideoView) findViewById(R.id.YouTubePlayerView));
+        mVideoView.setVideoId("x26hv6c");
+        mVideoView.setAutoPlay(true);
 
-        mVideoView = (WebView) findViewById(R.id.YouTubePlayerView);
-        mVideoView.setFocusable(true);
-        mVideoView.setClickable(true);
-        mVideoView.requestFocus();
-        WebSettings settings = mVideoView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setUserAgentString("");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            settings.setMediaPlaybackRequiresUserGesture(false);
-
-        mID = "bHQqvYy5KYo";
-
-        mWebChromeClient = new WebChromeClient() {
-            @Override
-            public View getVideoLoadingProgressView() {
-                ProgressBar pb = new ProgressBar(getParent());
-                pb.setIndeterminate(true);
-                return pb;
-            }
-
-            @Override
-            public void onShowCustomView(View view, CustomViewCallback callback) {
-                // if a view already exists then immediately terminate the new one
-                if (mCustomView != null) {
-                    callback.onCustomViewHidden();
-                    return;
-                }
-                //  Add the custom view to its container.
-                FrameLayout.LayoutParams COVER_SCREEN_GRAVITY_CENTER = new
-                        FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-
-                mRootLayout.addView(view, COVER_SCREEN_GRAVITY_CENTER);
-                mCustomView = view;
-                mViewCallback = callback;
-
-                // hide main browser view
-                mVideoView.setVisibility(View.GONE);
-
-                // Finally show the custom view container.
-                mRootLayout.setVisibility(View.VISIBLE);
-                //    mRootLayout.bringToFront();
-            };
-
-            @Override
-            public void onHideCustomView() {
-                if (mCustomView == null)
-                    return;
-
-                // Hide the custom view.
-                mCustomView.setVisibility(View.GONE);
-                // Remove the custom view from its container.
-                mRootLayout.removeView(mCustomView);
-                mCustomView = null;
-                mRootLayout.setVisibility(View.GONE);
-                mViewCallback.onCustomViewHidden();
-
-                // Show the content view.
-                mVideoView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                Log.d(TAG, consoleMessage.message() + " at line:" + consoleMessage.lineNumber());
-                return true;
-            }
-        };
-        mVideoView.setWebChromeClient(mWebChromeClient);
-        // Set up the user interaction to manually show or hide the system UI.
-        mVideoView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //    emulateClick();
-            }
-        });
-//        String url = "http://www.youtube.com/embed/" + mID + "?fs=1&frameborder=0&autoplay=1";
-//        mVideoView.loadUrl(url);
 //        String url =
 //                "<iframe class=\"youtube-player\" "
 //                        + "style=\"border: 0; width: 100%; height: 100%;"
@@ -129,14 +49,15 @@ public class MainActivity extends Activity {
 //                        + "controls onclick=\"this.play()\">\n" + "</iframe>\n";
 //
 //        mVideoView.loadData(url, "text/html", "utf-8");
-        mVideoView.loadUrl("file:///android_asset/youtube.html");
+//        mVideoView.loadUrl("file:///android_asset/youtube.html");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        mVideoView.onPause();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            mVideoView.onPause();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
@@ -144,20 +65,14 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        mVideoView.onResume();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            mVideoView.onResume();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
+
     @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        //    Toast toast = Toast.makeText(getApplicationContext(), event.toString(), Toast.LENGTH_LONG);
-        //    toast.show();
-        if ((event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER ||
-                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) &&
-                event.getAction() == KeyEvent.ACTION_UP) {
-//            emulateClick();
-            //mVideoView.performClick();
-        }
-        return super.dispatchKeyEvent(event);
+    public void onBackPressed() {
+        mVideoView.handleBackPress(this);
     }
 
     @Override
