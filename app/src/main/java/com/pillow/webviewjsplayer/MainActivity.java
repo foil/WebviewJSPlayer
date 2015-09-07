@@ -3,6 +3,7 @@ package com.pillow.webviewjsplayer;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -68,19 +69,17 @@ public class MainActivity extends Activity {
                 case KeyEvent.KEYCODE_ENTER:
                     webVideoView.playerState state = mVideoView.getPlayerState();
                     if (state == webVideoView.playerState.PLAYING)
-                        mVideoView.callPlayerMethod("pause");
+                        mVideoView.callPlayerMethod("pause", "");
                     else if (state == webVideoView.playerState.PAUSED)
-                        mVideoView.callPlayerMethod("play");
+                        mVideoView.callPlayerMethod("play", "");
                     return false;
                 case KeyEvent.KEYCODE_DPAD_RIGHT:
                     float sec = mVideoView.getTimeSec();
-                    String cmd = String.format("seek(%d)", (int)sec + 60);
-                    mVideoView.callPlayerMethod(cmd);
+                    mVideoView.callPlayerMethod("seek", Integer.toString((int)sec + 60));
                     return false;
                 case KeyEvent.KEYCODE_DPAD_LEFT:
                     sec = mVideoView.getTimeSec();
-                    cmd = String.format("seek(%f)", sec - 60);
-                    mVideoView.callPlayerMethod(cmd);
+                    mVideoView.callPlayerMethod("seek", Integer.toString((int)sec - 60));
                     return false;
                 default:
                     break;

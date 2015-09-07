@@ -137,7 +137,7 @@ public class webVideoView extends WebView {
                     String event = uri.getQueryParameter("event");
                     if (event.equals("apiready")) {
                         if (mAutoPlay) {
-                            callPlayerMethod("play");
+                            callPlayerMethod("play", "");
                         }
                     } else if (event.equals("timeupdate")) {
                         String time = uri.getQueryParameter("time");
@@ -161,8 +161,12 @@ public class webVideoView extends WebView {
     public float getTimeSec() {
         return mTimeSec;
     }
-    public void callPlayerMethod(String method) {
-        loadUrl("javascript:player.api(\"" + method + "\")");
+    public void callPlayerMethod(String method, String args) {
+        String cmd = "javascript:player.api(\"" + method + "\"";
+        if (!args.isEmpty())
+            cmd += "," + args;
+        cmd += ")";
+        loadUrl(cmd);
     }
     public void setVideoId(String videoId){
         loadUrl(String.format(mEmbedUrl, videoId, mAllowAutomaticNativeFullscreen, getContext().getPackageName()));
