@@ -76,6 +76,35 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_DPAD_CENTER:
+                case KeyEvent.KEYCODE_ENTER:
+                    webVideoView.playerState state = mVideoView.getPlayerState();
+                    if (state == webVideoView.playerState.PLAYING)
+                        mVideoView.callPlayerMethod("pause");
+                    else if (state == webVideoView.playerState.PAUSED)
+                        mVideoView.callPlayerMethod("play");
+                    return false;
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    float sec = mVideoView.getTimeSec();
+                    String cmd = String.format("seek(%d)", (int)sec + 60);
+                    mVideoView.callPlayerMethod(cmd);
+                    return false;
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                    sec = mVideoView.getTimeSec();
+                    cmd = String.format("seek(%f)", sec - 60);
+                    mVideoView.callPlayerMethod(cmd);
+                    return false;
+                default:
+                    break;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);

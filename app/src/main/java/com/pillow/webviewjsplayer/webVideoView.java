@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,7 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.VideoView;
 
 public class webVideoView extends WebView {
-
+    private static final String                 TAG = "WebVideoView";
     private WebSettings                         mWebSettings;
     private WebChromeClient                     mChromeClient;
     private VideoView                           mCustomVideoView;
@@ -33,6 +34,11 @@ public class webVideoView extends WebView {
     private FrameLayout                         mRootLayout;
     private boolean                             mAllowAutomaticNativeFullscreen = false;
     private boolean mAutoPlay = false;
+    public enum playerState {
+        READY, PLAY, PLAYING, PAUSED, ENDED
+    }
+    private playerState mState;
+    private float mTimeSec = 0;
 
     public webVideoView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -126,11 +132,20 @@ public class webVideoView extends WebView {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Uri uri = Uri.parse(url);
                 if (uri.getScheme().equals("dmevent")) {
+                    Log.d(TAG, uri.toString());
+
                     String event = uri.getQueryParameter("event");
                     if (event.equals("apiready")) {
                         if (mAutoPlay) {
                             callPlayerMethod("play");
                         }
+                    } else if (event.equals("timeupdate")) {
+                        String time = uri.getQueryParameter("time");
+                        mTimeSec = Float.parseFloat(time);
+                    } else if (event.equals("playing")) {
+                        mState = playerState.PLAYING;
+                    } else if (event.equals("pause")) {
+                        mState = playerState.PAUSED;
                     }
                     return true;
                 } else {
@@ -140,7 +155,13 @@ public class webVideoView extends WebView {
         });
     }
 
-    private void callPlayerMethod(String method) {
+    public playerState getPlayerState() {
+        return mState;
+    }
+    public float getTimeSec() {
+        return mTimeSec;
+    }
+    public void callPlayerMethod(String method) {
         loadUrl("javascript:player.api(\"" + method + "\")");
     }
     public void setVideoId(String videoId){
