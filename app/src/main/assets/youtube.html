@@ -14,7 +14,9 @@ var firstScriptTag = document.getElementsByTagName('script')[0];
 if (touchTesting) {
 	insertTestBtns();
 }
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+//firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+var player_div = document.getElementById("player");
+player_div.appendChild(tag);
 
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
@@ -65,12 +67,12 @@ function seek(seconds) {
 	player.playVideo();
 }
 function fullScreen() {
-    if (tag.requestFullScreen) {
-        tag.requestFullScreen();
-    } else if (tag.mozRequestFullScreen) {
-        tag.mozRequestFullScreen();
-    } else if (tag.webkitRequestFullScreen) {
-        tag.webkitRequestFullScreen();
+    if (player_div.requestFullScreen) {
+        player_div.requestFullScreen();
+    } else if (player_div.mozRequestFullScreen) {
+        player_div.mozRequestFullScreen();
+    } else if (player_div.webkitRequestFullScreen) {
+        player_div.webkitRequestFullScreen();
     }
 }
 

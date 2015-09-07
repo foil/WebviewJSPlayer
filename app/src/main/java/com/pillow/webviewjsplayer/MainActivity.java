@@ -1,27 +1,12 @@
 package com.pillow.webviewjsplayer;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.ConsoleMessage;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.widget.AbsoluteLayout;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 
 public class MainActivity extends Activity {
     private final static String TAG = "WebviewJSPlayer";
