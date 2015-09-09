@@ -32,10 +32,10 @@ public class webVideoView extends WebView {
     private FrameLayout                         mVideoLayout;
     private boolean                             mIsFullscreen = false;
     private FrameLayout                         mRootLayout;
-    private boolean                             mAllowAutomaticNativeFullscreen = false;
+    private boolean                             mAllowAutomaticNativeFullscreen = true;
     private boolean mAutoPlay = false;
     public enum playerState {
-        READY, PLAY, PLAYING, PAUSED, ENDED
+        READY, PLAY, PLAYING, PAUSED, SEEKING, SEEKED, ENDED, ERROR
     }
     private playerState mState;
     private float mTimeSec = 0;
@@ -132,8 +132,6 @@ public class webVideoView extends WebView {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Uri uri = Uri.parse(url);
                 if (uri.getScheme().equals("dmevent")) {
-                    Log.d(TAG, uri.toString());
-
                     String event = uri.getQueryParameter("event");
                     if (event.equals("apiready")) {
                         if (mAutoPlay) {
@@ -143,9 +141,24 @@ public class webVideoView extends WebView {
                         String time = uri.getQueryParameter("time");
                         mTimeSec = Float.parseFloat(time);
                     } else if (event.equals("playing")) {
+                        Log.d(TAG, uri.toString());
                         mState = playerState.PLAYING;
                     } else if (event.equals("pause")) {
+                        Log.d(TAG, uri.toString());
                         mState = playerState.PAUSED;
+                    } else if (event.equals("seeking")) {
+                        Log.d(TAG, uri.toString());
+                        mState = playerState.SEEKING;
+                    } else if (event.equals("seeked")) {
+                        Log.d(TAG, uri.toString());
+                        mState = playerState.SEEKED;
+                    } else if (event.equals("error")) {
+                        Log.d(TAG, uri.toString());
+                        mState = playerState.ERROR;
+                    } else if (event.equals("ended")) {
+                        Log.d(TAG, uri.toString());
+                        mState = playerState.ENDED;
+                        ((Activity) getContext()).finish();
                     }
                     return true;
                 } else {

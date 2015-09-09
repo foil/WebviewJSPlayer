@@ -3,6 +3,7 @@ package com.pillow.webviewjsplayer;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,9 @@ import android.view.WindowManager;
 
 public class MainActivity extends Activity {
     private final static String TAG = "WebviewJSPlayer";
+    private final static int SEEK_SHORT = 30;
+//    private final static int SEEK_LONG = 30 * 10;
+    private int mSeekStep = 0;
     private webVideoView mVideoView;
 
     @Override
@@ -22,7 +26,7 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_youtube_player);
         mVideoView = ((webVideoView) findViewById(R.id.YouTubePlayerView));
-        mVideoView.setVideoId("x26hv6c");
+        mVideoView.setVideoId("k4M8KMCoSkbyvxcVkP7");
         mVideoView.setAutoPlay(true);
 
 //        String url =
@@ -64,23 +68,40 @@ public class MainActivity extends Activity {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_UP) {
+            mSeekStep = 0;
             switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_DPAD_CENTER:
                 case KeyEvent.KEYCODE_ENTER:
                     webVideoView.playerState state = mVideoView.getPlayerState();
                     if (state == webVideoView.playerState.PLAYING)
                         mVideoView.callPlayerMethod("pause", "");
-                    else if (state == webVideoView.playerState.PAUSED)
+                    else //if (state == webVideoView.playerState.PAUSED)
+                        //
                         mVideoView.callPlayerMethod("play", "");
-                    return false;
+                    break;//return true;
+                default:
+                    break;
+            }
+        } else if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_DPAD_RIGHT:
-                    float sec = mVideoView.getTimeSec();
-                    mVideoView.callPlayerMethod("seek", Integer.toString((int)sec + 60));
-                    return false;
+                    if (mVideoView.getPlayerState() != webVideoView.playerState.SEEKING) {
+                        mSeekStep ++;
+                        float sec = mVideoView.getTimeSec();
+                        mVideoView.callPlayerMethod("seek",
+                                Integer.toString((int) sec + mSeekStep * SEEK_SHORT));
+                        Log.d(TAG, event.toString());
+                    }
+                    return true;
                 case KeyEvent.KEYCODE_DPAD_LEFT:
-                    sec = mVideoView.getTimeSec();
-                    mVideoView.callPlayerMethod("seek", Integer.toString((int)sec - 60));
-                    return false;
+                    if (mVideoView.getPlayerState() != webVideoView.playerState.SEEKING) {
+                        mSeekStep--;
+                        float sec = mVideoView.getTimeSec();
+                        mVideoView.callPlayerMethod("seek",
+                                Integer.toString((int) sec + mSeekStep * SEEK_SHORT));
+                        Log.d(TAG, event.toString());
+                    }
+                    return true;
                 default:
                     break;
             }
