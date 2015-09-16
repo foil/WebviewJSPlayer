@@ -76,7 +76,6 @@ public class MainActivity extends Activity {
                     if (state == webVideoView.playerState.PLAYING)
                         mVideoView.callPlayerMethod("pause", "");
                     else //if (state == webVideoView.playerState.PAUSED)
-                        //
                         mVideoView.callPlayerMethod("play", "");
                     break;//return true;
                 default:

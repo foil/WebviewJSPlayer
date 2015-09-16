@@ -16,6 +16,7 @@ import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
@@ -45,7 +46,7 @@ public class youtubePlayerActivity extends Activity {
         WebSettings settings = mVideoView.getSettings();
         settings.setJavaScriptEnabled(true);
     //    settings.setUserAgentString("");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
             settings.setMediaPlaybackRequiresUserGesture(false);
 
         mID = "bHQqvYy5KYo";
@@ -126,6 +127,13 @@ public class youtubePlayerActivity extends Activity {
 //                        + "controls onclick=\"this.play()\">\n" + "</iframe>\n";
 //
 //        mVideoView.loadData(url, "text/html", "utf-8");
+        mVideoView.setWebViewClient(new WebViewClient() {
+            public void onPageFinished(WebView view, String url) {
+                String id = "bHQqvYy5KYo";
+                String cmd = "javascript:initYoutube('" + id + "')";
+                mVideoView.loadUrl(cmd);
+            }
+        });
         mVideoView.loadUrl("file:///android_asset/youtube.html");
     }
 
