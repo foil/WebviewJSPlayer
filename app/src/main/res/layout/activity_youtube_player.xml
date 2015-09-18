@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
-    tools:context=".playerActivity">
+    tools:context=".playerActivity"
+    android:id = "@+id/youtubeLayout">
 
     <com.pillow.webviewjsplayer.webVideoView
         android:id="@+id/YouTubePlayerView"

@@ -37,7 +37,7 @@ public class youtubePlayerActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_youtube_player);
-    //    mRootLayout = (FrameLayout)findViewById(R.id.youtubeLayout);
+        mRootLayout = (FrameLayout)findViewById(R.id.youtubeLayout);
 
         mVideoView = (WebView) findViewById(R.id.YouTubePlayerView);
         mVideoView.setFocusable(true);
@@ -134,6 +134,7 @@ public class youtubePlayerActivity extends Activity {
                 mVideoView.loadUrl(cmd);
             }
         });
+
         mVideoView.loadUrl("file:///android_asset/youtube.html");
     }
 
